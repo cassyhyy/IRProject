@@ -1,0 +1,113 @@
+<html lang="en">
+<head>
+    <title>模糊搜索</title>
+    <meta charset="UTF-8">
+    <!-- 表示根据设备的大小调整页面显示的宽度-->
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!--  Bootstrap需要jQuery的支持  导入jQuery开发包-->
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <!-- Bootstrap需要的js包-->
+    <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+    <!--Bootstrap需要的CSS样式-->
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/simSearch.css">
+    <script type="text/javascript" src="./js/angular.min.js"></script>
+</head>
+
+
+<body ng-app="search" ng-controller="searchCtrl">
+<!--搜索框 -->
+
+<nav class="nav navbar inverse-color">
+    <div class="logo"></div>
+    <div id="search-type">
+        <p class="navbar-text pull-right">
+            <a href="LMSearch.html" class="navbar-link str-color-white">模糊搜索</a>
+            <a href="otherSearch.html" class="navbar-link str-color-white">通配符匹配</a>
+            <a href="simSearch.html" class="navbar-link str-color-white">相似度查询</a>
+        </p>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row margin-top-big">
+        <div class="control-group">
+            <!-- Search input-->
+            <label class="control-label"></label>
+            <div class="col-md-6">
+                <input type="text" placeholder="" class="form-control" ng-model="doc1">
+            </div>
+
+            <div class="col-md-6">
+                <div class="controls input-group">
+                    <input type="text" placeholder="" class="form-control" ng-model="doc2">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" ng-click="search()">搜索</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="control-group">
+            <label class="control-label"></label>
+            <!-- Button -->
+            <div class="controls">
+                <p class="help-block col-md-12 text-right">请输入文档编号（在1-246）之间</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<br><br><br>
+<div class="container" ng-show="result">
+    <div class="row">
+        <h3>相似度：{{data.sim}}</h3>
+        <div id="search-result">
+            <br>
+            <div class="col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <a href="Song.html?#song={{data.song1}}" class="panel-title"><strong>{{data.song1.title}}</strong></a>
+                    </div>
+                    <div class="panel-body lyrics">
+                        {{data.song1.lyrics}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <a href="Song.html?#song={{data.song2}}" class="panel-title"><strong>{{data.song2.title}}</strong></a>
+                    </div>
+                    <div class="panel-body lyrics">
+                        {{data.song2.lyrics}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+<script type="text/javascript">
+    var app = angular.module("search",[]);
+
+    app.controller("searchCtrl", function($scope,$http) {
+        //通过使用index.html传过来的关键词进行查找并初始化页面
+        $scope.search = function () {
+            var url = "./SIMSearchServlet";
+            var data = {"doc1":$scope.doc1,"doc2":$scope.doc2};
+
+            $http.post(url, data).then(function(response){
+                console.log(response.data);
+                $scope.data=response.data;
+                $scope.result = true;
+            });
+        };
+    });
+</script>

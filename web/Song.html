@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>歌曲</title>
+    <!-- 表示根据设备的大小调整页面显示的宽度-->
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!--  Bootstrap需要jQuery的支持  导入jQuery开发包-->
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <!-- Bootstrap需要的js包-->
+    <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+    <!--Bootstrap需要的CSS样式-->
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/song.css">
+    <script type="text/javascript" src="./js/angular.min.js"></script>
+
+</head>
+<body ng-app="Song" ng-controller="SongCtrl">
+
+<div class="container">
+    <div class="bg bg-blur"></div>
+    <div class="song-box song-front">
+        <div class="title">{{song.title}}</div>
+        <hr>
+        <div class="lyrics" ng-bind-html="song.lyrics"></div>
+    </div>
+</div>
+
+</body>
+</html>
+
+
+<script type="text/javascript">
+    var app = angular.module("Song",[]);
+
+    app.controller("SongCtrl", function($scope,$location,$sce) {
+        var str = $location.hash().substring(5);
+        //console.log(str);
+        $scope.song = JSON.parse(str);
+        var l = $scope.song.lyrics.replace(/\n/g, "<br />");
+        $scope.song.lyrics = $sce.trustAsHtml(l);
+    });
+</script>

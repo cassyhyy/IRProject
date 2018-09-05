@@ -1,0 +1,61 @@
+<html lang="en">
+<head>
+  <title>模糊搜索</title>
+  <meta charset="UTF-8">
+  <!-- 表示根据设备的大小调整页面显示的宽度-->
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <!--  Bootstrap需要jQuery的支持  导入jQuery开发包-->
+  <script type="text/javascript" src="./js/jquery.min.js"></script>
+  <!-- Bootstrap需要的js包-->
+  <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+  <!--Bootstrap需要的CSS样式-->
+  <link rel="stylesheet" href="./css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="./css/index.css">
+  <script type="text/javascript" src="./js/index.js"></script>
+  <script type="text/javascript" src="./js/angular.min.js"></script>
+</head>
+
+
+<body ng-app="LMSearch" ng-controller="LMSearchCtrl">
+<!--搜索框 -->
+
+  <nav class="nav navbar ">
+  <div id="search-type">
+  <p class="navbar-text pull-right">
+    <a href="LMSearch.html" class="navbar-link str-color-white">模糊搜索</a>
+    <a href="otherSearch.html" class="navbar-link str-color-white">通配符匹配</a>
+    <a href="simSearch.html" class="navbar-link str-color-white">相似度查询</a>
+  </p>
+</div>
+</nav>
+
+<div class="bg-div"></div>
+<div class="container">
+  <div class="row">
+  <div class="search-box">
+    <div class="logo"> </div>
+    <form class="search-form" id="search-form">
+      <input type="text" class="search-text" id="search-input" autocomplete="off" ng-model="keyword">
+      <button class="search-button" value="" ng-click="search()" />
+    </form>
+    <br><br><br><br><br>
+  </div>
+  </div>
+</div>
+</body>
+</html>
+
+
+<script type="text/javascript">
+    var app = angular.module("LMSearch",[]);
+
+    app.controller("LMSearchCtrl", function($scope) {
+        //将关键词传到后台，并转入新页面
+        $scope.search = function () {
+            var url = "./LMSearchServlet";
+            var keyword = {"keyword": $scope.keyword};
+
+            location.href = "LMSearch.html?keyword="+$scope.keyword;
+        };
+    });
+</script>

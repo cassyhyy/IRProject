@@ -1,0 +1,44 @@
+.song-box{
+	color: #fff;
+	font-size: 40px;
+}
+
+.bg{
+	background: url(../images/people.jpg);
+	height: 900px;
+	text-align: center;
+	line-height: 900px;
+}
+
+.bg-blur{
+	float: left;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    -webkit-filter: blur(15px);/*清晰度*/
+    -moz-filter: blur(15px);
+    -o-filter: blur(15px);
+    -ms-filter: blur(15px);
+    filter: blur(15px);
+}
+
+.song-front{
+	position: absolute;
+	left: 10px;
+	right: 10px;
+	/*height: 600px;*/
+	/*line-height: 600px;*/
+	text-align: center;
+}
+
+.title{
+	height: 40px;
+	margin: 20px auto;
+}
+
+.lyrics{
+	height: 600px;
+	margin: 20px auto;
+	font-size: 20px;
+}

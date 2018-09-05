@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>通配符-搜索</title>
+    <!-- 表示根据设备的大小调整页面显示的宽度-->
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!--  Bootstrap需要jQuery的支持  导入jQuery开发包-->
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <!-- Bootstrap需要的js包-->
+    <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+    <!--Bootstrap需要的CSS样式-->
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <script type="text/javascript" src="./js/angular.min.js"></script>
+</head>
+
+<body ng-app="Search" ng-controller="SearchCtrl">
+<br><br><br><br><br>
+<!--bootstrap：搜索框 -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="请输入检索关键字" id="keyword" ng-model="keyword">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" href="javascript:void(0);" ng-click="search()">检索</button>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<br><br><br><br>
+
+<!--查询结果-->
+<div id="cutline">
+    <div class="container" id="search-result">
+      <div class="row" ng-repeat="data in dataArray">
+        <div class="col-md-6">
+          <table class="table table-striped table-hover">
+            <caption class="wordterm">{{data.word.term}}</caption>
+            <thead>
+            <tr>
+              <th>所在文件编号</th>
+              <th>出现次数</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!--<tr ng-repeat="song in data.song">
+                <td>
+                    {{data.song.title}}
+                </td>
+            </tr>-->
+            </tbody>
+          </table>
+        </div>
+        <br><br>
+        <div class="col-md-6">
+          <div class="panel panel-primary" ng-repeat="song in data.song">
+            <div class="panel-heading">
+            <h3 class="panel-title">{{song.title}}</h3>
+            </div>
+            <div class="panel-body">
+                {{song.lyrics}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+</div>
+
+</body>
+</html>
+
+
+<script type="text/javascript">
+    var app = angular.module("Search",[]);
+
+    app.controller("SearchCtrl", function($scope,$http) {
+        $scope.search = function () {
+            var url = "./OtherSearchServlet";
+            var keyword = {"keyword":$scope.keyword};
+
+            $http.post(url, keyword).then(function(response){
+                console.log(response.data);
+                $scope.dataArray=response.data;
+            });
+        };
+    });
+</script>

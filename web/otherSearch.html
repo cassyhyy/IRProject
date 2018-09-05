@@ -1,0 +1,96 @@
+<html lang="en">
+<head>
+    <title>通配符匹配</title>
+    <meta charset="UTF-8">
+    <!-- 表示根据设备的大小调整页面显示的宽度-->
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!--  Bootstrap需要jQuery的支持  导入jQuery开发包-->
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <!-- Bootstrap需要的js包-->
+    <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+    <!--Bootstrap需要的CSS样式-->
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/otherSearch.css">
+    <script type="text/javascript" src="./js/angular.min.js"></script>
+</head>
+
+
+<body ng-app="search" ng-controller="searchCtrl">
+<!--搜索框 -->
+
+<nav class="nav navbar inverse-color">
+    <div class="logo"></div>
+    <div id="search-type">
+        <p class="navbar-text pull-right">
+            <a href="LMSearch.html" class="navbar-link str-color-white">模糊搜索</a>
+            <a href="otherSearch.html" class="navbar-link str-color-white">通配符匹配</a>
+            <a href="simSearch.html" class="navbar-link str-color-white">相似度查询</a>
+        </p>
+    </div>
+</nav>
+<div class="container">
+    <div class="row margin-top-big">
+        <div class="control-group">
+            <!-- Search input-->
+            <label class="control-label"></label>
+            <div class="col-md-6">
+                <div class="controls input-group">
+                    <input type="text" placeholder="" class="form-control" ng-model="keyword">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" ng-click="search()">搜索</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="control-group">
+            <label class="control-label"></label>
+            <!-- Button -->
+            <div class="controls">
+                <p class="help-block col-md-6 text-right">请使用*、AND、OR等词</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<br><br><br>
+<div class="container">
+    <div class="row"ng-repeat="data in dataArray">
+        <h3>对应查询语句：{{data.word.term}}</h3>
+        <div id="search-result">
+            <br>
+            <div class="col-md-6">
+                <div class="panel panel-primary" ng-repeat="song in data.song">
+                    <div class="panel-heading">
+                        <a href="Song.html?#song={{song}}" class="panel-title"><strong>{{song.title}}</strong></a>
+                    </div>
+                    <div class="panel-body song-lyrics">
+                        {{song.lyrics}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+<script type="text/javascript">
+    var app = angular.module("search",[]);
+
+    app.controller("searchCtrl", function($scope,$http) {
+        //通过使用index.html传过来的关键词进行查找并初始化页面
+        $scope.search = function () {
+            var url = "./OtherSearchServlet";
+            var keyword = {"keyword":$scope.keyword};
+
+            $http.post(url, keyword).then(function(response){
+                console.log(response.data);
+                $scope.dataArray=response.data;
+            });
+        };
+    });
+</script>

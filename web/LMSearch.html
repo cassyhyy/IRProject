@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>语言模型-搜索</title>
+    <!-- 表示根据设备的大小调整页面显示的宽度-->
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!--  Bootstrap需要jQuery的支持  导入jQuery开发包-->
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <!-- Bootstrap需要的js包-->
+    <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+    <!--Bootstrap需要的CSS样式-->
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/LMSearch.css">
+    <script type="text/javascript" src="./js/angular.min.js"></script>
+</head>
+
+<body ng-app="LMSearch" ng-controller="LMSearchCtrl">
+<!--导航栏-->
+<nav class="nav navbar inverse-color">
+    <div class="logo"></div>
+    <div id="search-type">
+        <p class="navbar-text pull-right">
+            <a href="LMSearch.html" target="_self" class="navbar-link str-color-white">模糊搜索</a>
+            <a href="otherSearch.html" target="_self" class="navbar-link str-color-white">通配符匹配</a>
+            <a href="simSearch.html" target="_self" class="navbar-link str-color-white">相似度查询</a>
+        </p>
+    </div>
+</nav>
+
+<!--bootstrap：搜索框 -->
+<div class="container margin-top-big">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="请输入检索关键字" id="keyword" ng-model="keyword">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" href="javascript:void(0);" ng-click="LMsearch()">检索</button>
+                    <!--<button class="btn btn-primary" href="javascript:void(0);" ng-click="test()">跳转</button>-->
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="control-group">
+            <label class="control-label"></label>
+            <!-- Button -->
+            <div class="controls">
+                <p class="help-block col-md-6 text-right">请使用过滤掉停用词的歌词，并以空格为分隔符</p>
+            </div>
+        </div>
+    </div>
+</div>
+<br><br><br><br>
+
+<!--查询结果-->
+<div id="cutline">
+    <div class="container" id="search-result" ng-repeat="song in songs">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+                <a class="panel-title" href="Song.html?#song={{song}}" target="_self">{{song.title}}</a>
+                <h5 class="panel-title">ranking:{{song.ranking}}</h5>
+            </div>
+            <div class="panel-body song-lyrics" ng-bind-html="song.lyrics | highlight:keyword">
+                <!--{{song.lyrics | highlight:keyword}}-->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+</div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+    var app = angular.module("LMSearch",[]);
+
+    //$location.search()需要此配置
+    app.config(['$locationProvider', function ($locationProvider) {
+        $locationProvider.html5Mode({
+            enabled: true,
+            requireBase: false
+        });
+    }]);
+
+    //高亮显示
+    app.filter("highlight", function($sce, $log){
+        var fn = function(text, search){
+            //$log.info("text: " + text);
+            //$log.info("search: " + search);
+            if (!search) {
+                return $sce.trustAsHtml(text);
+            }
+
+            search.toLocaleLowerCase();
+            var key = search.split(" ");
+            var result = text;
+
+            for(var i in key){
+                console.log("关键词:"+key[i]);
+                key[i] = encodeURIComponent(key[i]);
+                var regex = new RegExp(key[i], 'gi');
+                result = result.replace(regex, '<span style="color:red">$&</span>');
+            }
+
+            /*text = encodeURIComponent(text);
+            search = encodeURIComponent(search);
+            var regex = new RegExp(search, 'gi');
+            var result = text.replace(regex, '<span style="color:red">$&</span>');*/
+
+            result = decodeURIComponent(result);
+            $log.info("result: " + result );
+            return $sce.trustAsHtml(result);
+
+            //$scope.song.lyrics = $sce.trustAsHtml(result);
+        };
+        return fn;
+    });
+
+    app.controller("LMSearchCtrl", function($scope,$http,$location) {
+        //通过使用index.html传过来的关键词进行查找并初始化页面
+        if($location.search().keyword != null){
+            console.log($location.search().keyword);
+            $scope.keyword = $location.search().keyword;
+
+            var data = {"keyword":$location.search().keyword};
+            var url = "./LMSearchServlet";
+            $http.post(url, data).then(function(response){
+                console.log("搜索相应："+response);
+                $scope.songs=response.data;
+            });
+        }
+
+        $scope.LMsearch = function () {
+            var keyword = {"keyword":$scope.keyword};
+            var url = "./LMSearchServlet";
+
+            $http.post(url, keyword).then(function(response){
+                console.log("搜索相应："+response);
+                $scope.songs=response.data;
+            });
+        };
+
+        /*$scope.test = function() {
+            var url = "./LMSearchServlet";
+            var keyword = {"keyword": $scope.keyword};
+
+            location.href = "test.html?keyword="+$scope.keyword;
+            $http.post(url, keyword).then(function (response) {
+                //console.log(response);
+                var str = "test.html?data="+response.data.toString();
+                console.log(str);
+                location.href = "test.html?data="+response.data.toString();
+            });
+        };*/
+
+    });
+</script>
